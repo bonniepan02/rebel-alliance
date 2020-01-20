@@ -32,7 +32,7 @@ Editor's note: The framework assumes a certain app topology, similar to most fra
 ## References
 
 1. [What is Serverless Architecture? What are its Pros and Cons?](https://hackernoon.com/what-is-serverless-architecture-what-are-its-pros-and-cons-cc4b804022e9)
-2. [Serverless Architectures](https://martinfowler.com/articles/serverless.html)
+2. [Serverless Architectures from Mike Roberts](https://martinfowler.com/articles/serverless.html)
 3. [Serverless Architectural Patterns](https://medium.com/@eduardoromero/serverless-architectural-patterns-261d8743020)
-4. [Own Operational Excellence](https://charity.wtf/2016/05/31/wtf-is-operations-serverless/)
-5. [Open Source Framework](https://github.com/serverless/serverless)
+4. [Own Operational Excellence from Charity Majors](https://charity.wtf/2016/05/31/wtf-is-operations-serverless/)
+
