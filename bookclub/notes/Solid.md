@@ -38,7 +38,32 @@ Event sourcing is a strategy wherein we store the transactions, but not the stat
 
 Software is composed of sequence, selection, iteration, and indirection. Nothing more. Nothing less.
 
-## Part III: Design Principles
+## Part III: SOLID Principles
+
+The Solid principles tell us how to arrange our functions and data structures into classes, and how those classes should be interconnected. How? By properly separating the things that change for different reasons (the Single Responsibility Principle), and then organizing the dependencies between those things properly (DIP).
+
+`SRP: The Single Responsibility Principle`
+
+Each software module has one, and only one, reason to change.
+
+`OCP: The Open-closed Principle`
+
+New behaviors are added by adding new code, rather than changing existing code. Higher level component are procted from the changes made to lower-level components. The goal is to make the system easy to extend without incurring a high impact of change.
+
+`LSP: The Liskov Substitution Principle`
+
+Those parts adhere to a contract should be substituted one for another.
+We might have interface implemented by serveral classes. Or we might have several Ruby classes that share the same method signatures. Or we might have a set of services that all respond to the same REST interface.
+
+`ISP: THe Interface Segregation Principle`
+
+This principle advises software designers to avoid depending on things that they don't use.
+
+`DIP: The Dependency Inversion Principle`
+
+The code that implements high-level policy should not depend on the code that implements low-level details. Rather, details should depend on policies.
+
+## Part IV: Component Principles
 
 ## References:
 
