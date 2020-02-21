@@ -69,4 +69,5 @@ The code that implements high-level policy should not depend on the code that im
 
 1. Solid Principles by Uncle Bob Martin, https://www.youtube.com/watch?v=t86v3N4OshQ
 2. Principles of OOD, http://butunclebob.com/ArticleS.UncleBob.PrinciplesOfOod
-3.
+3. The principles of Clean Architecture, https://www.youtube.com/watch?v=o_TH-Y78tt4
+4.
