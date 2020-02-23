@@ -63,3 +63,4 @@ SREs provision to meet a capacity target at a specific response speed, and thus 
 References:
 
 1. [Google SRE books](https://landing.google.com/sre/books/)
+2. [Keys to SRE](https://www.youtube.com/watch?v=n4Wf14e2jxQ)
