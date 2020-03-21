@@ -1,5 +1,21 @@
 # Domain Driven Design
 
+## Chapter 4
+
+### Layered Architecture
+
+Creating programs that can handle very complex tasks calls for seperation of concerns, allowing concerntration on different parts of the design in isolation.
+
+Partition a complex program into layers. Develop a design within each layer that is cohesive and that depends only on the layers below.
+
+Application Layer: This layer is kept thin. It does not contain business rules or knowledge, but only coordinates tasks and delegates work to collaberations of domain objects in the next layer down. It does not have state refelcting the business situation, but it can have state that reflects the progress of a task for the user or the program.
+
+Isolated layers are much less expensive to maintain, because they tend to evolve at different rates and respond to different needs.
+
+The infrastructure layer usaully does not initiate action in the domain layer. Being "below" the domain layer, it should have no specific knowledge of the domain it is serving. Such technical capabilities are most often offered as Services. The main benefit is simplifying the application layer: knowing when to send a message, but not burdened with how.
+
+The bottom line is this: If the architecture isolates the domain-related code in a way that allows a cohesive domain design loosely coupled ti the rest of the system, then that architecture can probably support domain driven design.
+
 ## Chapter 5
 
 - Entity: an object represent something with continuity and identity(something tracked through different states and across different implementations)
@@ -64,3 +80,5 @@ This pattern favors interface simplicity over client control and versatility.
 There is a limit to how many things a person can think about at once(hence low coupling). Incoherent fragments of ideas are as hard to understand as an undifferentiated soup of ideas(hence high cohesion). Lowcoupling and high cohesion are general design principles.
 
 Like everything else in a domain-driven design, Modules are a communications mechanism. If your model is telling a story, the Modules are chapters. Give the modules names that become part of the ubiquuitous language. Modules and their names should reflect insight into the domain.
+
+## Chapter 6
