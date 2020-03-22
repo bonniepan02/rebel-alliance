@@ -82,3 +82,50 @@ There is a limit to how many things a person can think about at once(hence low c
 Like everything else in a domain-driven design, Modules are a communications mechanism. If your model is telling a story, the Modules are chapters. Give the modules names that become part of the ubiquuitous language. Modules and their names should reflect insight into the domain.
 
 ## Chapter 6
+
+The challenges of managing the life cycle of a domain object:
+
+1. Maintaining integrity throughout the life cycle
+2. Preventing the model from getting swamped by the complexity of managing the life cycle
+
+This chapter addresses these issues through the following three patterns:
+
+### Aggregates
+
+An aggregate tighten up the model itself by defining clear ownership and boundaries, avoiding a chaotic, tnangled web of objects. It is a cluster of associated objects that we treat as a unit for the purpose of data changes. Each aggregate has a root and a boundary. The boundary defines what is inside the Aggregate. The root is a single, specific Entity contained in the Aggregate. The root is the only member of the Aggregate that outside objects are allowed to hold references to, although objects within the boundary may hold references to each other.
+
+### Factories
+
+Creation of an object can be a major operation in itself, but complex assembly operations do not fit the responsibility of the created objects. Combining such responsibilities can produce ungainly designs that are hard to understand. Making the client direct construction muddies the design of the client, breaches encapsulation of the assembled object of AGGREGATE, and overly couples the client to the implementation of the created object. Provide an interface that encapsulates all complex assembly and that does not require the client to reference the concrete classes of the objects being instantiated.
+
+#### when a constructor is all you need
+
+Factories can obscure simple objects that don't use polymorphism. The trade offs favor a bare, public constructor in the following circumstances.
+
+- The class is the type. It is not part of any interesting hierarchy, and it isn't used polymorphically by implementing an interface.
+- The client cares about the implementation, perhaps as a way of choosing a strategy.
+- All of the attributes of the object are available to the client, so that no object creation gets nested inside the constructor exposed to the client.
+- The construction is not complicated.
+- A public constructor must follow the same rules as Factory: It must be an atomic operation that satisfies all invariants of the created object.
+
+To sum up, the access points for creation of instances must be identified, and their scope must be defined explicitly. They may simply be constructors, but often there is a need for a more abstract or elaborate instance creation mechanism. This need introduces new constructs into the design: Factories.
+
+Factories usaully do not express any part of the model, yet they are a part of the domain design that helps keep the model expressing objects sharp. A Factory encapsualtes the life cycle transitions of creation and reconstitution.
+
+### Repositories
+
+Another transition that exposes technical complexity that swamp the domain design is the transition to and from storage. This transition is the responsibility of Repository.
+
+The repository pattern is a simple conceptual framework to encapsulate technology of data retrieval and bring back our model focus. The problem it is trying to solve is:
+
+A subset of persistent objects must be globally accesible through a search based on object attributes. Such access is needed for the roots of Aggregates that are not convenient to reach by traversal. They are usally entities, sometimes value objects with complex internal structure, and sometimes enumerated values. Providing access to other objects muddies important distinctions. Free databse queries can breach the encapsulation of domain objects and aggregates. Exposure of technical infrastructure and database access mechanisms complicates the client and obscures the model driven design.
+
+Therefore:
+For each type of object that needs global access, create an object that provide the illusion of an in-momory collection of all obejcts of that type. Set up access through a well-known global interface. Provide repositories only for aggregate roots that actually need direct access. Keep the client focused on the model, delegating all object storage and access to the repositories.
+
+The advantages include:
+
+- They present clients with a simple model for obtaining persistent objects and managing their life cycle.
+- They decouple application and domain design from persistence technology, multiple database strategies, or even multiple data sources.
+- They communicate design decisions about object access.
+- They allow easy substitution of a dummy implementation, for use in testing(typically using an in-memory collection).
