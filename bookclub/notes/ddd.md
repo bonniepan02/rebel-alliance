@@ -129,3 +129,22 @@ The advantages include:
 - They decouple application and domain design from persistence technology, multiple database strategies, or even multiple data sources.
 - They communicate design decisions about object access.
 - They allow easy substitution of a dummy implementation, for use in testing(typically using an in-memory collection).
+
+## Chapter 7: using the language
+
+- understand the model language
+- introducing the applications
+  - The application classes are coordinators. They should not work out the answers to the questions they ask. That is the domain layer's job.
+- identifying entities and value objects
+  - entities: globally uniquely identified by single ID or a combination of attributes; requires continuity of identity; not interchangable with same attributes;
+  - value objects: two objects with the same value can be the same one; usually shouldn't reference their owners.
+- design associations
+  - avoid bidirectional associations; they are ticky to maintain
+- Aggregate boundaries
+  - The root is a single, specific Entity contained in the Aggregate. The root is the only member of the Aggregate that outside objects are allowed to hold references to.
+  - Entities within aggregate boundary are internal to aggregate. It has meaning and identity only in association with aggregate root.
+- selecting repositories
+  - repositories are prohibited from interior of aggregate
+  - start with application requirements to find where requires repository
+- pause for refactoring
+  - design smell: transaction could fail due to contention, maybe need to reconsider aggregate boundaries
