@@ -109,6 +109,21 @@ An SLO buffer also makes it possible to accommodate reimplementations that trade
 
 Understanding how well a system is meeting its expectations helps decide whether to invest in making the system faster, more available, and more resilient. Alternatively, if the service is doing fine, perhaps staff time should be spent on other priorities, such as paying off technical debt, adding new features, or introducing other products.
 
+# Eliminating Toil
+
+> If a human operator needs to touch your system during normal operations, you have a bug. The definition of normal changes as your system grow.
+
+## Toil defined
+
+What is toil? Toil is the kind of work tied to running a production service that tends to be manual, repetitive, automatable, tactical, devoid of enduring value, and that scales linearly as a service grows.
+
+Toils is not simply equivalent to administrative chores(overhead, meetings, etc) or grungy work(clean up alerts). If human judgment is essential for the task, there’s a good chance it’s not toil.
+
+Reasons why toil is bad: career stagnation, low morale, slow progress, promote atrrition.  
+If we all commit to eliminate a bit of toil each week with some good engineering.
+
+# Monitoring Distributed Systems
+
 References:
 
 1. [Google SRE books](https://landing.google.com/sre/books/)
