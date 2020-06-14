@@ -124,6 +124,8 @@ If we all commit to eliminate a bit of toil each week with some good engineering
 
 # Monitoring Distributed Systems
 
+
+
 References:
 
 1. [Google SRE books](https://landing.google.com/sre/books/)

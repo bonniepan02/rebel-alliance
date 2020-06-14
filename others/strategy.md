@@ -6,7 +6,7 @@ The goal of the principles is the creation of mid-level software structures that
 - Are the basis of components that can be used in many software systems
 
 Design principle: 
-Identify the aspects of your application that vary and separate them from what stays the same
+Identify the aspects of your application that vary and separate them from what stays the same.
 Here is another way to think about this principle: take the parts that vary and encapsulate them, so that later you can alter or extend the parts that vary without affecting those that don't. 
 
 
@@ -33,3 +33,5 @@ each software module has one and only one reason to change.
 Open closed principle: 
 They must be designed to allow the behavior of those systems to be changed by adding new code, rather than changing existing code. 
 
+SOLID Principles are the principles to help us manage change. 
+Dependency inversion principles 

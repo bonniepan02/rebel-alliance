@@ -148,3 +148,26 @@ The advantages include:
   - start with application requirements to find where requires repository
 - pause for refactoring
   - design smell: transaction could fail due to contention, maybe need to reconsider aggregate boundaries
+
+## Strategic Design 
+- Subtle design (such as DDD) requires concrete boundaries. Microservices have them. 
+- Proliferation of services recreate some of the old problems
+- Context Maps help visualize and communicate about those problems
+- Modest Use of interchange contexts can help produce coherent sets of microservices
+
+
+
+References: 
+1. https://docs.microsoft.com/en-us/azure/architecture/microservices/model/domain-analysis
+2. https://domainlanguage.com/wp-content/uploads/2016/04/GettingStartedWithDDDWhenSurroundedByLegacySystemsV1.pdf
+
+
+# Architecture changes 
+https://docs.google.com/presentation/d/1S425SpVsXdVRarteRNW8cWvH3mTSFd7IRDdKdPNpq7M/mobilepresent?slide=id.g7e400b553d_2_4
+
+change management methodology
+- PDCA: communication structure
+- ADKAR Aware, Desire, Knowledge, Ability, Reinforce: Architecture decision documentation 
+  - ADR template: context, decision, consequences
+- Kotter 8 steps: create urgency, build guiding coalition, form strategic vision, communicate vision, enable and remove barriers, generate short term wins, sustain acceleration, anchor in culture 
+- 
