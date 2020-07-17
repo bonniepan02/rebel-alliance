@@ -8,7 +8,7 @@ this means shifting some of the operations burden back to the development team, 
 
 their potentially unorthodox approaches to service management require strong management support. For example, the decision to stop releases for the remainder of the quarter once an error budget is depleted might not be embraced by a product development team unless mandated by their management.
 
-SRE as a specific implementation of DevOps.
+SRE as a specific implementation of DevOps. Site Reliability Engineering represents a significant break from existing industry best practices for managing large, complicated services. Motivated originally by familiarity--"as a software engineer, this is how I would want to invest my time to accomplish a set of repetitive tasks" -- it has becomes 
 
 ## Ensure a durable focus on engineering
 
