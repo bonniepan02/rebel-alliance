@@ -1,34 +1,35 @@
+```
 #!/bin/sh
 INTERVAL=5
 PREFIX=$INTERVAL-sec-status
 RUNFILE=/home/benchmarks/running
 mysql -e 'SHOW GLOBAL VARIABLES' >> mysql-variables
-while test -e $RUNFILE; do  
- file=$(date +%F_%I)   
-    sleep=$(date +%s.%N | awk "{print $INTERVAL - (\$1 % $INTERVAL)}")  
- sleep $sleep   
-    ts="$(date +"TS %s.%N %F %T")"  
- loadavg="$(uptime)"   
-    echo "$ts $loadavg" >> $PREFIX-${file}-status   
-    mysql -e 'SHOW GLOBAL STATUS' >> $PREFIX-${file}-status &   
-    echo "$ts $loadavg" >> $PREFIX-${file}-innodbstatus   
-    mysql -e 'SHOW ENGINE INNODB STATUS\G' >> $PREFIX-${file}-innodbstatus &   
-    echo "$ts $loadavg" >> $PREFIX-${file}-processlist   
-    mysql -e 'SHOW FULL PROCESSLIST\G' >> $PREFIX-${file}-processlist &   
+while test -e $RUNFILE; do
+ file=$(date +%F_%I)
+    sleep=$(date +%s.%N | awk "{print $INTERVAL - (\$1 % $INTERVAL)}")
+ sleep $sleep
+    ts="$(date +"TS %s.%N %F %T")"
+ loadavg="$(uptime)"
+    echo "$ts $loadavg" >> $PREFIX-${file}-status
+    mysql -e 'SHOW GLOBAL STATUS' >> $PREFIX-${file}-status &
+    echo "$ts $loadavg" >> $PREFIX-${file}-innodbstatus
+    mysql -e 'SHOW ENGINE INNODB STATUS\G' >> $PREFIX-${file}-innodbstatus &
+    echo "$ts $loadavg" >> $PREFIX-${file}-processlist
+    mysql -e 'SHOW FULL PROCESSLIST\G' >> $PREFIX-${file}-processlist &
     echo $ts
 done
 echo Exiting because \$RUNFILE does not exist.
-
-whether a server is doing all of its work optimally, to find out why a specific query is not executing quickly enough, and to troubleshoot mysterious intermittent incidents(stalls, pileups, freezes)
+```
 
 # Chapter 3: Profiling Server Performance
 
 Our definition is that performance is measured by the time required to complete a task. In other words, performance is response time.
+
 A database server’s performance is measured by query response time, and the unit of measurement is time per query.
 If you thought that performance optimization was about improving queries per second, then you were thinking about throughput optimization.
 Optimizing queries makes it possible for the server to execute more queries per second, because each one requires less time to execute when the server is optimized. (The unit of throughput is queries per time, which is the inverse of our definition of performance.)
 
-So if the goal is to reduce response time, we need to understand why the server requires a certain amount of time to respond to a query, and reduce or eliminate whatever unnecessary work it’s doing to achieve the result. you cannot reliably optimize what you cannot measure.
+So if the goal is to reduce response time, we need to understand why the server requires a certain amount of time to respond to a query, and reduce or eliminate whatever unnecessary work it’s doing to achieve the result. _You cannot reliably optimize what you cannot measure_.
 
 In contrast, we aim to spend most of our time—perhaps upwards of 90%—measuring where the response time is spent. If we don’t find the answer, we might not have measured correctly or completely.
 
@@ -36,47 +37,52 @@ Execution-time profiling shows which tasks consume the most time, whereas wait a
 
 It’s especially helpful to have more information on the response times, such as histograms, percentiles, the standard deviation, and the index of dispersion.
 
-The first tactic is watching SHOW FULL PROCESSLIST repeatedly with the --processlist option, noting when queries first appear and when they disappear. This is a sufficiently accurate method for some purposes, but it can’t capture all queries. Very short-lived queries can sneak in and finish before the tool can observe them.
+The first tactic is watching **SHOW FULL PROCESSLIST repeatedly** with the --processlist option, noting when queries first appear and when they disappear. This is a sufficiently accurate method for some purposes, but it can’t capture all queries. Very short-lived queries can sneak in and finish before the tool can observe them.
 
 Another bit of extra detail here is the variance-to-mean ratio, in the V/M column. This is also known as the index of dispersion. Queries with a higher index of dispersion have a more variable execution-time profile, and highly variable queries are generally good candidates for optimization.
 
 ## Show profile
 
+```
 mysql> SET profiling = 1;
 
 mysql> SET @query*id = 1;Query OK,
 0 rows affected (0.00 sec)
-mysql> SELECT STATE, SUM(DURATION) AS Total_R,  
--> ROUND(  
--> 100 * SUM(DURATION) /  
--> (SELECT SUM(DURATION)  
--> FROM INFORMATION*SCHEMA.PROFILING  
--> WHERE QUERY_ID = @query_id  
--> ), 2) AS Pct_R,  
--> COUNT(*) AS Calls,  
--> SUM(DURATION) / COUNT(\*) AS "R/Call"  
--> FROM INFORMATION_SCHEMA.PROFILING  
--> WHERE QUERY_ID = @query_id  
--> GROUP BY STATE  
+mysql> SELECT STATE, SUM(DURATION) AS Total_R,
+-> ROUND(
+-> 100 * SUM(DURATION) /
+-> (SELECT SUM(DURATION)
+-> FROM INFORMATION*SCHEMA.PROFILING
+-> WHERE QUERY_ID = @query_id
+-> ), 2) AS Pct_R,
+-> COUNT(*) AS Calls,
+-> SUM(DURATION) / COUNT(\*) AS "R/Call"
+-> FROM INFORMATION_SCHEMA.PROFILING
+-> WHERE QUERY_ID = @query_id
+-> GROUP BY STATE
 -> ORDER BY Total_R DESC;
+```
 
 ## Using performance schema
 
-mysql> SELECT event_name, count_star, sum_timer_wait  
--> FROM events_waits_summary_global_by_event_name  
+```
+mysql> SELECT event_name, count_star, sum_timer_wait
+-> FROM events_waits_summary_global_by_event_name
 -> ORDER BY sum_timer_wait DESC LIMIT 5;
+```
 
 Diagnosing Intermittent Problems
 InnoDB scalability limitations were causing query plan optimization to take too long when concurrency was over some threshold.
-Try to determine whether the problem is with a single isolated query, or if it's server-wide.
+**Try to determine whether the problem is with a single isolated query, or if it's server-wide**.
 This is good news and bad news: good because you’re much less likely to hit them, and bad because they require more knowledge of MySQL internals to diagnose. It also means that a lot of problems can be solved by simply upgrading MySQL.
 
 ## Show Global Status: threads_connected, threads_running, query per second.
 
-Two common cases. One is some kind of internal bottleneck in the server, causing new queries to begin executing but to pile up against some lock that the older queries are waiting to acquire. This type of lock usaully puts back-pressure on the application servers and causes some queueing there, too.
+One is some kind of internal bottleneck in the server, causing new queries to begin executing but to pile up against some lock that the older queries are waiting to acquire. This type of lock usaully puts back-pressure on the application servers and causes some queueing there, too.
 
 ## Show processlist
 
+```
 State: sending data
 State: freeing items
 State: NULL
@@ -86,25 +92,33 @@ State: Cleaning up
 State: Update
 State: Sorting result
 State: logging slow query
+```
+
 The most characteristic and reliable indicator of a problem was a high number of queries in the “freeing items” state. A spike of unusual thread states in show processlist is another good indicator.
 
 ## Using query logging
 
 To find problems in the query log, turn on the slow query log and set logn_query_time to 0 globally, and make sure that all of the connections see the new setting.
+
+```
 mysql -e 'SHOW PROCESSLIST\G' | grep -c "State: freeing items"
+```
 
 Watch the status variables once per second, and if Threads_running exceeds 20 for more than 5 seconds, start gathering diagnostic data.
 
-Execution time is spent doing work or waiting, as you’ll recall. When an unknown problem happens, there are two types of causes, broadly speaking. The server could be doing a lot of work—consuming a lot of CPU cycles—or it could be stuck waiting for resources to become free.
+**Execution time is spent doing work or waiting, as you’ll recall. When an unknown problem happens, there are two types of causes, broadly speaking. The server could be doing a lot of work—consuming a lot of CPU cycles—or it could be stuck waiting for resources to become free**.
 
 It’s a good idea not only to try to understand how the server behaves, but also to take an inventory of the server’s status, configuration, software, and hardware.
 
 The queries weren’t perfect, but they were still running in less than 10 ms most of the time. So we confirmed that the server was fine under normal circumstances. (This is important to do; many problems that are noticed only sporadically are actually symptoms of chronic problems, such as failed hard drives in RAID arrays.)
 
-What Causes Poor Performance? When a resource is behaving badly, it’s good to try to understand why. There are a few possibilities:The resource is being overworked and doesn’t have the capacity to behave well.The resource is not configured properly.The resource is broken or malfunctioning.
+What Causes Poor Performance? When a resource is behaving badly, it’s good to try to understand why. There are a few possibilities:The resource is being overworked and doesn’t have the capacity to behave well. The resource is not configured properly. The resource is broken or malfunctioning.
 
+```
 mysql> SHOW TABLES FROM INFORMATION_SCHEMA LIKE '%\_STATISTICS';
-You can find the most-used and least-used tables and indexes, by reads, updates, or both.You can find unused indexes, which are candidates for removal.You can look at the CONNECTED_TIME versus the BUSY_TIME of the replication user to see whether replication will likely have a hard time keeping up soon.
+```
+
+You can find the most-used and least-used tables and indexes, by reads, updates, or both. You can find unused indexes, which are candidates for removal.You can look at the CONNECTED_TIME versus the BUSY_TIME of the replication user to see whether replication will likely have a hard time keeping up soon.
 
 - We think that the most useful way to define performance is in terms of response time.
 - You cannot reliably improve what you cannot measure, so performance improvement works best with high-quality, well-scoped, complete measurements of response time.
@@ -183,7 +197,7 @@ If your server version doesn’t support innodb_autoinc_lock_mode, you can upgra
 
 ### Indexes and Locking
 
-InnoDB can lock rows it doesn’t really need even when it uses an index. The problem is even worse when it can’t use an index to find and lock the rows: if there’s no index for the query, MySQL will do a full table scan and lock every row, whether it “needs” it or not.Here’s a little-known detail about InnoDB, indexes, and locking: InnoDB can place shared (read) locks on secondary indexes, but exclusive (write) locks require access to the primary key. That eliminates the possibility of using a covering index and can make SELECT FOR UPDATE much slower than LOCK IN SHARE MODE or a nonlocking query.
+InnoDB can lock rows it doesn’t really need even when it uses an index. The problem is even worse when it can’t use an index to find and lock the rows: if there’s no index for the query, MySQL will do a full table scan and lock every row, whether it “needs” it or not. Here’s a little-known detail about InnoDB, indexes, and locking: InnoDB can place shared (read) locks on secondary indexes, but exclusive (write) locks require access to the primary key. That eliminates the possibility of using a covering index and can make SELECT FOR UPDATE much slower than LOCK IN SHARE MODE or a nonlocking query.
 
 ## Index and Table maintenance
 
@@ -191,9 +205,9 @@ Corrupted indexes can cause queries to return incorrect results, raise duplicate
 
 If the statistics were never generated, or if they are out of date, the optimizer can make bad decisions. The solution is to run ANALYZE TABLE, which regenerates the statistics.
 
-You can examine the cardinality of your indexes with the SHOW INDEX FROM command. You can also get this data from the INFORMATION_SCHEMA.STATISTICS table in MySQL 5.0 and newer
+You can examine the cardinality of your indexes with the **SHOW INDEX** FROM command. You can also get this data from the INFORMATION_SCHEMA.STATISTICS table in MySQL 5.0 and newer
 InnoDB also calculates statistics for queries against some INFORMATION_SCHEMA tables, SHOW TABLE STATUS and SHOW INDEX queries.
-There will also be index statistics persistence in MySQL 5.6, controlled by the innodb_analyze_is_persistent option.
+There will also be index statistics persistence in MySQL 5.6, controlled by the **innodb_analyze_is_persistent** option.
 
 If you configure your server not to update index statistics automatically, you need to do it manually with periodic ANALYZE TABLE commands, unless you know that the statistics won’t change in ways that will create bad query plans.
 
@@ -202,8 +216,116 @@ If you configure your server not to update index statistics automatically, you n
 For storage engines that don’t support OPTIMIZE TABLE, you can rebuild the table with a no-op ALTER TABLE. Just alter the table to have the same engine it currently uses:
 mysql> ALTER TABLE <table> ENGINE=<engine>;
 
-How do you know whether your schema is indexed well enough? As always, we suggest that you frame the question in terms of response time. Find queries that are either taking too long or contributing too much load to the server. Examine the schema, SQL, and index structures for the queries that need attention. Determine whether the query has to examine too many rows, perform post-retrieval sorting or use temporary tables, access data with random I/O, or look up full rows from the table to retrieve columns not included in the index.
+How do you know whether your schema is indexed well enough? As always, we suggest that you frame the question in terms of response time.
+Find queries that are either taking too long or contributing too much load to the server. Examine the schema, SQL, and index structures for the queries that need attention. Determine whether the query has to examine too many rows, perform post-retrieval sorting or use temporary tables, access data with random I/O, or look up full rows from the table to retrieve columns not included in the index.
 
 # Chapter 6. Query Performance Optimization
 
 In the previous chapters we explained schema optimization and indexing, which are necessary for high performance. But they aren’t enough—you also need to design your queries well. If your queries are bad, even the best-designed schema and indexes will not perform well.
+
+## Why are queries slow?
+
+In general, you can think of a query’s lifetime by mentally following the query through its sequence diagram from the client to the server, where it is parsed, planned, and executed, and then back again to the client. Execution is one of the most important stages in a query’s lifetime. It involves lots of calls to the storage engine to retrieve rows, as well as post-retrieval operations such as grouping and sorting.
+
+## Slow query basics: optimize data access
+
+1. Find out whether your application is retrieving more data than you need. That usually means it’s accessing too many rows, but it might also be accessing too many columns.
+2. Find out whether the MySQL server is analyzing more rows than it needs.
+
+### Is MYSQL Examing too much data?
+
+The simplest query cost metrics are:
+
+- Response time
+  Response time is the sum of two things: service time and queue time. Service time is how long it takes the server to actually process the query. Queue time is the portion of response time during which the server isn't really executing the query-- it is waiting for something, such as waiting for an I/O operation to complete, waiting for a row lock, and so forth.
+
+  The access types range from a full table scan to index scans, range scans, unique index lookups, and constants. Each of these is faster than the one before it, because it requires reading less data.
+
+- Number of rows examined
+- Number of rows returned
+
+### Query Execution Basics
+
+1. The client sends the SQL statement to the server.
+2. The server checks the query cache. If there's a hit, it returns the stored result from the cache; otherwise, it passes the SQL statement to the next step.
+3. The server parses, preprocesses, and optimizes the SQL into a query execution plan.
+4. The query execution engine executes the plan by making calls to the storage engine API.
+5. The server sends the restult to the client.
+
+### The MYSQL client/server protocal
+
+- Query states
+  Sleep: The thread is waiting for a new query from the client.
+  Query: The thread is either executing the query or sending the result back to the client
+  Locked: The thread is waiting for a table lock to be granted at the server level. Lockes are implemented by the storage engine, such as InnoDB's row locks, do not cause the thread to enter the locked state.
+
+# Chapter 8. Optimizing Server Settings
+
+The server should be configured for the workload, data, and application requirements, not just the hardware.
+It is usally better to configure the basic settings correctly (and there are only a few that really matter in most cases) and spend more time on schema optimization, indexes, and query design.
+
+Make sure the basics such as the InnoDB buffer pool and log file size are appropriate.
+
+When you find a query that needs a larger sort buffer to perform well, you can raise the sort_buffer_size value just before the query and then restore it to DEFAULT afterward. Here’s an example of how to do this:
+
+```
+SET @@session.sort_buffer_size := <value>;
+-- Execute the query...
+SET @@session.sort_buffer_size := DEFAULT;
+```
+
+You should always have a monitoring system in place to measure whether a change improves or hurts your server’s overall performance in real life.
+
+Before you start changing your configuration, you should optimize your queries and your schema, addressing at least the obvious things such as adding indexes. If you get deep into tweaking the configuration and then change your queries or schema, you might need to reevaluate the configuration. Keep in mind that unless your hardware, workload, and data are completely static, chances are you’ll need to revisit your configuration later.
+
+Our base file looks like this:
+
+```
+[mysqld]
+
+# GENERAL
+
+datadir = /var/lib/mysql
+socket = /var/lib/mysql/mysql.sock
+pid_file = /var/lib/mysql/mysql.pid
+user = mysql
+port = 3306
+storage_engine = InnoDB
+
+# INNODB
+
+innodb_buffer_pool_size=<value>
+innodb_log_file_size=<value>
+innodb_file_per_table = 1
+innodb_flush_method = O_DIRECT
+
+# MyISAM
+
+key_buffer_size = <value>
+
+# LOGGING
+
+log_error = /var/lib/mysql/mysql-error.loglog_slow_queries = /var/lib/mysql/mysql-slow.log
+
+# OTHER
+
+tmp_table_size = 32M
+max_heap_table_size = 32M
+query_cache_type = 0
+query_cache_size = 0
+max_connections = <value>
+thread_cache_size = <value>
+table_cache_size = <value>
+open_files_limit = 65535
+[client]
+socket = /var/lib/mysql/mysql.sock
+port = 3306
+```
+
+Sometimes you can use the output from SHOW GLOBAL STATUS as input to your configuration to help customize the settings better for your workload.
+
+innodb_autoinc_lock_modeThis option controls how InnoDB generates autoincrementing primary key values, which can be a bottleneck in some cases, such as high-concurrency inserts. If you have many transactions waiting on the autoincrement lock (you can see this in SHOW ENGINE INNODB STATUS), you should investigate this setting. We won’t repeat the manual’s explanation of the options and their behaviors.
+
+The most important options are these two, assuming that you use InnoDB, which most people should:innodb_buffer_pool_sizeinnodb_log_file_size
+
+# Chapter 10. Replication
