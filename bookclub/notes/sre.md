@@ -8,7 +8,7 @@ this means shifting some of the operations burden back to the development team, 
 
 their potentially unorthodox approaches to service management require strong management support. For example, the decision to stop releases for the remainder of the quarter once an error budget is depleted might not be embraced by a product development team unless mandated by their management.
 
-SRE as a specific implementation of DevOps. Site Reliability Engineering represents a significant break from existing industry best practices for managing large, complicated services. Motivated originally by familiarity--"as a software engineer, this is how I would want to invest my time to accomplish a set of repetitive tasks" -- it has becomes 
+SRE as a specific implementation of DevOps. Site Reliability Engineering represents a significant break from existing industry best practices for managing large, complicated services. Motivated originally by familiarity--"as a software engineer, this is how I would want to invest my time to accomplish a set of repetitive tasks" -- it has becomes
 
 ## Ensure a durable focus on engineering
 
@@ -124,7 +124,46 @@ If we all commit to eliminate a bit of toil each week with some good engineering
 
 # Monitoring Distributed Systems
 
+# Chapter 9 Simplicity
 
+> The price of reliabiltiy is the pursuit of the utmost simplicity.
+
+If we stop changing the codebase, we stop introducing bugs. (The second law of thermodynamics, in principle, states that a closed system's disorder cannot be reduced, it can only remain unchanged or increase. A measure of this disorder is entropy. This law also seems plausible for software systems; as a system is modified, its disorder, or entropy, tends to increase. This is known as software entropy. Code refactoring is considered to decrease the software entrophy in a stepwise fashion.)
+
+> Goal: at the end of the day, our job is to keep agility and stability in balance in the system.
+
+Exploratory coding: setting an explicit shelf life for whatever code I write with the understanding that I will need to try and fail once in order to really understand the task I need to accomplish.
+
+> SRE works to create procedures, practices and tools that ender software more reliable. Building reliability into development allows developers to focus their attention on what we really do care about—the functionality and performance of their software and systems.
+
+## The virtue of boring
+
+It is very important to consider the difference between essential complexity and accidental complexity.
+To minimize accidental complexity, SRE team should:
+
+1. Push back when accidental complexity is introduced into the system for which they are responsible
+2. Constantly strive to eliminate complexity in systems they onboard and for which they assume operational responsibility
+
+## I won't give up my code
+
+every new line of code written is a liability. SRE promotes practices that make it more likely that all code has an essential purpose, such as scrutinizing code to make sure that it actually drives business goals, routinely removing dead code, and building bloat detection into all levels of testing.
+
+## The "nagative lines of code" metric
+
+## Minimal APIs
+
+> perfection is finally attained not when there is no longer more to add, but when there is no longer anything to take away
+
+## Modularity
+
+As a system grows more complex, the separation of responsibility between APIs and between binaries becomes increasingly important.
+
+A well-designed distributed system consists of collaborators, each of which has a clear and well-scoped purpose.
+
+## conclusion:
+
+This chapter has repeated one theme over and over: software simplicity is a prerequisite to reliability.
+Every time we say "no" to a feature, we are not restricting innovation; we are keeping the environment uncluttered of distractions so that focus remains squarely on innovation, and real engineering can proceed.
 
 References:
 
