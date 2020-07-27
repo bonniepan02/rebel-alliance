@@ -60,6 +60,19 @@ Provisioning combines both change management and capacity planning.
 
 SREs provision to meet a capacity target at a specific response speed, and thus are keenly interested in a service’s performance. SREs and product developers will (and should) monitor and modify a service to improve its performance, thus adding capacity and improving efficiency.
 
+# Embracing Risk
+
+It turns out that past a certain point, increasing reliability is worse for a service (and its users) rather than better! Rather than simply maximizing uptime, Site Reliability Engineering seeks to balance the risk of unavailability with the goals of rapid innovation and efficient service operations, so that users’ overall happiness—with features, service, and performance—is optimized.
+
+The costliness has two dimensions: The cost of redundant machine/compute resources; the opportunity cost.
+We conceptualize risk as a continuum. We give equal importance of figuring out how to engineer greater reliability into google systems and identifying the appropriate level of tolerance for the services we run.
+
+> We strive to make service reliable enough, but no more reliable than it needs to be. We view the availability target as both a minimum and a maximum. The key advantage of this framing is that it unlocks explicit, thoughtful risktaking.
+
+At Google, however, a time-based metric for availability is usually not meaningful because we are looking across globally distributed services. Therefore, instead of using metrics around uptime, we define availability in terms of the request success rate.
+
+availability = successful requests/total requests
+
 # Service Level Objects
 
 ## SLI:
@@ -123,6 +136,8 @@ Reasons why toil is bad: career stagnation, low morale, slow progress, promote a
 If we all commit to eliminate a bit of toil each week with some good engineering.
 
 # Monitoring Distributed Systems
+
+This chapter offers guidelines for what issues should interrupt a human via a page, and how to deal with issues that aren’t serious enough to trigger a page.
 
 # Chapter 9 Simplicity
 
