@@ -73,6 +73,15 @@ At Google, however, a time-based metric for availability is usually not meaningf
 
 availability = successful requests/total requests
 
+## Identifying the risk tolerance of consumer services
+
+- what level of availability is required?
+- Do different types of failures have different effects on the service?
+- How can we use the service cost to help locate a service on the risk continuum?
+- What other service metrics are important to take into account?
+
+## Target level of availability
+
 # Service Level Objects
 
 ## SLI:
@@ -139,6 +148,62 @@ If we all commit to eliminate a bit of toil each week with some good engineering
 
 This chapter offers guidelines for what issues should interrupt a human via a page, and how to deal with issues that aren’t serious enough to trigger a page.
 
+A given incident might have multiple root causes: for example, perhaps it was caused by a combination of insufficient process automation, software that crashed on bogus input and insufficient testing of the script used to generate the configuration.
+
+## Increase signal to noise ration of pages
+
+Paging a human is a quite expensive use of an employee’s time. If an employee is at work, a page interrupts their workflow. If the employee is at home, a page interrupts their personal time, and perhaps even their sleep. When pages occur too frequently, employees second-guess, skim, or even ignore incoming alerts, sometimes even ignoring a "real" page that’s masked by the noise.
+
+## White box monitoring vs Black box monitoring
+
+For paging, black-box monitoring has the key benefit of forcing discipline to only nag a human when a problem is both already ongoing and contributing to real symptoms. On the other hand, for not-yet-occurring but imminent problems, black-box monitoring is fairly useless.
+
+## Four golden signlas
+
+1. Latency: A slow error is even worse than a fast error! Therefore, it's important to track error latency, as opposed to just filtering out errors.
+2. Traffic: A measure of how much demand is being placed on your system, measured in a high-level system-specific metric.
+3. Errors: The rate of requests that fail.
+4. Saturation: How full your service is. Latency increase are often a leading indicator of saturation. Measuring your 99th percentile reponse time over some small window can give a very early signal of saturation.
+
+If you measure all four golden signals and page a human when one signal is problematic(or, in the case of saturation, nearly problematic), your service will be at least decently covered by monitoring.
+
+## Worry about your tail
+
+The simplest way to differentiate between a slow average and a very slow "tail" of requests is to collect request counts bucketed by latencies(suitable for rendering a histogram).
+
+## Tying these principles together
+
+When creating rules for monitoring and alerting, asking the following questions can help you avoid false positives and pager burnout:
+
+- Does this rule detect an otherwise undetected condition that is urgent, actionable, and actively or imminently user-visible?
+- Will I ever be able to ignore this alert, knowing it’s benign? When and why will I be able to ignore this alert, and how can I avoid this scenario?
+- Does this alert definitely indicate that users are being negatively affected? Are there detectable cases in which users aren’t being negatively impacted, such as drained traffic or test deployments, that should be filtered out?
+- Can I take action in response to this alert? Is that action urgent, or could it wait until morning? Could the action be safely automated? Will that action be a long-term fix, or just a short-term workaround?
+- Are other people getting paged for this issue, therefore rendering at least one of the pages unnecessary?
+
+These questions reflect a fundamental philosophy on pages and pagers:
+
+- Every time the pager goes off, I should be able to react with a sense of urgency. I can only react with a sense of urgency a few times a day before I become fatigued.
+- Every page should be actionable.
+- Every page response should require intelligence. If a page merely merits a robotic response, it shouldn’t be a page.
+- Pages should be about a novel problem or an event that hasn’t been seen before.
+
+This perspective also amplifies certain distinctions: it’s better to spend much more effort on catching symptoms than causes; when it comes to causes, only worry about very definite, very imminent causes.
+
+## Monitoring for the long term
+
+This strategy gave us enough breathing room to actually fix the longer-term problems in Bigtable and the lower layers of the storage stack, rather than constantly fixing tactical problems. On-call engineers could actually accomplish work when they weren’t being kept up by pages at all hours. Ultimately, temporarily backing off on our alerts allowed us to make faster progress toward a better service.
+
+Managers and technical leaders play a key role in implementing true, long-term fixes by supporting and prioritizing potentially time-consuming long-term fixes even when the initial “pain” of paging subsides.
+
+Taking a controlled, short-term decrease in availability is often a painful, but strategic trade for the long-run stability of the system.
+
+We review statistics about page frequency (usually expressed as incidents per shift, where an incident might be composed of a few related pages) in quarterly reports with management, ensuring that decision makers are kept up to date on the pager load and overall health of their teams.
+
+## Conclusion
+
+Over the long haul, achieving a successful on-call rotation and product includes choosing to alert on symptoms or imminent real problems, adapting your targets to goals that are actually achievable, and making sure that your monitoring supports rapid diagnosis.
+
 # Chapter 9 Simplicity
 
 > The price of reliabiltiy is the pursuit of the utmost simplicity.
@@ -179,6 +244,10 @@ A well-designed distributed system consists of collaborators, each of which has 
 
 This chapter has repeated one theme over and over: software simplicity is a prerequisite to reliability.
 Every time we say "no" to a feature, we are not restricting innovation; we are keeping the environment uncluttered of distractions so that focus remains squarely on innovation, and real engineering can proceed.
+
+# Practical Alerting from Time-series Data
+
+Monitoring enables service owners to make rational decisions about the impact of changes to the service, apply the scientific method to incident response, and of course ensure their reson for exisitence: to measure the service's alignment with business goals.
 
 References:
 

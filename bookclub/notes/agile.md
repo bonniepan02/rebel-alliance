@@ -2,9 +2,9 @@ Agile is a small idea about the small problem of small programming teams doing s
 
 - Build projects around motivated individuals. Give them the environment and support they need, and trust them to get the job done.
 - The best architectures, requirements, and designs emerge from self-organizing teams.
-- At regular intervals, the team reflects on how to become more effective, then tunes and adjusts its behavior accordingly.
 - Continuous attention to technical excellence and good design enhances agility.
 - Simplicity — the art of maximizing the amount of work not done — is essential.
+- At regular intervals, the team reflects on how to become more effective, then tunes and adjusts its behavior accordingly.
 
 They represent extremely long term thinking on the part of the technical leaders. Instead of working on something that would meet a small need this week, they were laying a foundation for a fundamental shift in the way cluster software was developed. That investment has not only reaped incredible rewards at Google, but has influenced the entire industry.
 
@@ -15,3 +15,5 @@ the work isnt standardized
 language, conventions, quality bar
 you cant drop into a new team and be productive in a day
 because you have to learn the micro culture of that team
+
+Agile is a framework of disciplines that support professional software development. Agile is a continuous iteration of development and testing in the software development process whereas Scrum is an Agile process to focus on delivering the business value in the shortest time. Agile methodology delivers the software on a regular basis for feedback while Scrum delivers the software after each sprint.
